@@ -1,0 +1,14 @@
+This is improved MCImage class that originally was wrote by Drew McCormack from The Mental Faculty.
+I decided to improve it and make it a little smarty than it was.
+Now it correctly stretches whole center image area (not only 1x1 center area) and supports iOS5-like stretching.
+
+How to use:
+1. Like in iOS, load image from file and make it stretchable:
+NSImage *stretchableImage = [[NSImage imageNamed:@"myImage.png"] stretchableImageWithLeftCapWidth:10 topCapHeight:5];
+2. Assign it to NSImageView and it will draw it as you expect:
+myImageView.image = stretchableImage;
+
+P.S. There is also iOS5-like mathod available:
+BFEdgeInsets insets = BFEdgeInsetsMake(5, 8, 2, 8);
+NSImage *stretchableImage = [[NSImage imageNamed:@"myImage.png"] stretchableImageWithEdgeInsets:insets];
+myImageView.image = stretchableImage;
