@@ -14,11 +14,20 @@
 - (NSImage *)stretchableImageWithLeftCapWidth:(CGFloat)leftCapWidth topCapHeight:(CGFloat)topCapHeight {
     BFEdgeInsets insets = BFEdgeInsetsMake(topCapHeight, leftCapWidth, topCapHeight, leftCapWidth);
     BFImage *newImage = [[BFImage alloc] initWithImage:self insets:insets];
+  
+#if ! __has_feature(objc_arc)
     return [newImage autorelease];
+#else
+    return newImage;
+#endif
 }
 - (NSImage *)stretchableImageWithEdgeInsets:(BFEdgeInsets)insets {
     BFImage *newImage = [[BFImage alloc] initWithImage:self insets:insets];
+#if ! __has_feature(objc_arc)
     return [newImage autorelease];
+#else
+    return newImage;
+#endif
 }
 @end
 
@@ -51,9 +60,14 @@
 
 - (void)dealloc {
     self.sliceImages = nil;
-    [_cachedImage release]; _cachedImage = nil;
+#if ! __has_feature(objc_arc)
+    [_cachedImage release];
+#endif
+    _cachedImage = nil;
     
+#if ! __has_feature(objc_arc)
     [super dealloc];
+#endif
 }
 
 #pragma mark - Internal Methods
@@ -67,7 +81,11 @@
         [self drawInRect:toRect fromRect:rect operation:NSCompositeCopy fraction:1.0f];
         [newImage unlockFocus];        
     }
+#if ! __has_feature(objc_arc)
     return [newImage autorelease];
+#else
+    return newImage;
+#endif
 }
 
 - (void)setSliceImages:(NSArray *)sliceImages {
@@ -75,8 +93,12 @@
         if (_sliceImages == sliceImages) {
             return;
         }
+#if ! __has_feature(objc_arc)
         [_sliceImages autorelease];
         _sliceImages = [sliceImages retain];
+#else
+        _sliceImages = sliceImages;
+#endif
     }
 }
 
@@ -105,12 +127,20 @@
             NSImage *bottomRight = [self sliceFromRect:NSMakeRect(self.size.width - rightCapWidth, 0.0f, rightCapWidth, bottomCapHeight)];
             
             NSArray *slices = [NSArray arrayWithObjects:topLeft, topEdge, topRight, leftEdge, center, rightEdge, bottomLeft, bottomEdge, bottomRight, nil];
-            
+          
+#if ! __has_feature(objc_arc)
             _sliceImages = [slices retain];
-            
+#else
+            _sliceImages = slices;
+#endif
+          
             self.slicing = NO;
         }
+#if ! __has_feature(objc_arc)
         return [[_sliceImages retain] autorelease];
+#else
+        return _sliceImages;
+#endif
     }
 }
 
@@ -150,8 +180,12 @@
                         [slices objectAtIndex:8],
                         NSCompositeSourceOver, 1.0f, NO);
     [imageToCache unlockFocus];
-    
+  
+#if ! __has_feature(objc_arc)
     self.cachedImage = [imageToCache autorelease];
+#else
+    self.cachedImage = imageToCache;
+#endif
     
     [self.cachedImage drawInRect:NSMakeRect(0, 0, self.cachedImageSize.width, self.cachedImageSize.height)
                         fromRect:NSZeroRect
